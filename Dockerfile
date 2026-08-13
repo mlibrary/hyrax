@@ -4,7 +4,7 @@ ARG RUBY_VERSION=3.3
 FROM ruby:$RUBY_VERSION-$DEBIAN_VERSION AS hyrax-base
 
 RUN apt-get update && \
-    curl -sL "https://deb.nodesource.com/setup_20.x" | bash - && \
+    curl -sL "https://deb.nodesource.com/setup_22.x" | bash - && \
     apt-get install -y --no-install-recommends \
     acl \
     build-essential \
