@@ -12,7 +12,9 @@ fcrepo4-data
 fcrepo4-test-data
 
 ## JS lock files
-yarn.lock
+# yarn.lock is committed on purpose: image builds run `yarn` against these
+# package.json files, so an unpinned range would otherwise resolve to a new
+# upstream release at build time and can break the build with no local change.
 package-lock.json
 
 ## MAC OS

@@ -1,10 +1,14 @@
 ARG DEBIAN_VERSION=trixie
 ARG RUBY_VERSION=3.3
+ARG NODE_VERSION=22
 
 FROM ruby:$RUBY_VERSION-$DEBIAN_VERSION AS hyrax-base
 
+# Global ARGs are not visible inside a build stage unless redeclared.
+ARG NODE_VERSION
+
 RUN apt-get update && \
-    curl -sL "https://deb.nodesource.com/setup_22.x" | bash - && \
+    curl -sL "https://deb.nodesource.com/setup_$NODE_VERSION.x" | bash - && \
     apt-get install -y --no-install-recommends \
     acl \
     build-essential \
