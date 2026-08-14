@@ -70,7 +70,19 @@ end
 if seed_dassie
   puts 'Seeding Dassie ...'
 
-  Hyrax::RequiredDataSeeder.new.generate_seed_data
+  # TEMPORARY DIAGNOSTIC -- remove before committing.
+  # Rails' backtrace cleaner silences frames outside Rails.root, and the engine
+  # is mounted outside it, so the real frame never reaches the console.
+  begin
+    Rails.backtrace_cleaner.remove_silencers!
+    Rails.backtrace_cleaner.remove_filters!
+    Hyrax::RequiredDataSeeder.new.generate_seed_data
+  rescue Exception => e
+    puts "@@@DIAG CLASS #{e.class}"
+    puts "@@@DIAG MSG   #{e.message}"
+    e.backtrace.first(60).each { |l| puts "@@@DIAG BT #{l}" }
+    raise
+  end
   Hyrax::TestDataSeeders::UserSeeder.generate_seeds
 end
 

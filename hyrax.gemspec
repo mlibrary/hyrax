@@ -90,6 +90,10 @@ SUMMARY
   spec.add_dependency 'valkyrie', '~> 3.5'
   spec.add_dependency 'view_component', '~> 2.74.1' # Pin until blacklight is updated with workaround for https://github.com/ViewComponent/view_component/issues/1565
   spec.add_dependency 'sprockets', '3.7.2' # 3.7.3 fails feature specs
+  # sprockets 3.7.2 calls the positional-argument form ERB.new(data, nil, '<>'),
+  # which erb 6.x removed (ERB#initialize now takes only str + keyword args).
+  # Cap below 6 until sprockets 4 (which uses the keyword form) is adopted.
+  spec.add_dependency 'erb', '< 6'
   spec.add_dependency 'sass-rails', '~> 6.0'
   spec.add_dependency 'select2-rails', '~> 3.5'
   spec.add_dependency 'language_list'
