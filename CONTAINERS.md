@@ -241,6 +241,32 @@ docker push ghcr.io/samvera/hyrax/hyrax-base:$HYRAX_VERSION
 
 Do the same for `hyrax-worker-base`.
 
+#### JavaScript dependencies and `yarn.lock`
+
+The `yarn.lock` files are committed on purpose, in three places: the engine
+root, `.dassie/`, and `.koppie/`.  Container builds and the dev entrypoint both
+run `yarn` against these, so without a lockfile an unpinned range in
+`package.json` resolves to whatever the newest matching release happens to be
+at build time.  That can break the build with no local change.
+
+Because the compose files bind-mount the app directory from the host, `yarn` is
+run with `--frozen-lockfile` in `bin/dev-entrypoint.sh` and in CI.  Without it,
+`yarn` rewrites the committed lockfile inside your working tree on every
+container start.
+
+If a container fails to start with a lockfile error, `package.json` and
+`yarn.lock` have diverged.  Regenerate the lockfile and commit it:
+
+```sh
+# from the directory whose package.json changed (., .dassie, or .koppie)
+yarn install && git add yarn.lock
+```
+
+Node's major version is pinned by `NODE_VERSION` in the `Dockerfile`, alongside
+`RUBY_VERSION` and `DEBIAN_VERSION`.  Note that some locked packages constrain
+it: `selenium-webdriver` currently requires Node >= 22, so lowering
+`NODE_VERSION` below that will fail the engine's `yarn install`.
+
 We also publish an image for the stable test application `dassie`:
 
 ```sh

@@ -17,7 +17,11 @@ elif [ "$(id -u)" -eq 0 ]; then
 fi
 
 bundle install
-yarn install
+# --frozen-lockfile: the app dir is bind-mounted from the host, so a plain
+# `yarn install` would re-resolve unpinned ranges and rewrite the committed
+# yarn.lock in the developer's working tree. Fail loudly instead; if this
+# errors, regenerate the lockfile and commit it. See CONTAINERS.md.
+yarn install --frozen-lockfile
 
 # Precompile assets if running in production (Nurax)
 [ "$RAILS_ENV" = "production" ] && bundle exec rake assets:precompile
